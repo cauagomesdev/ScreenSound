@@ -12,6 +12,7 @@ namespace ScreenSound.Tests.Integracao;
 /// Testa os endpoints /artistas fazendo requisições HTTP de verdade
 /// contra a API rodando em memória.
 /// </summary>
+[Trait("Categoria", "Integracao")]
 public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
 {
     private readonly ScreenSoundApiFactory factory;

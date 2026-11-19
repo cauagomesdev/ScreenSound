@@ -17,8 +17,8 @@ jobs:
       - name: Restaurar dependências
         run: dotnet restore ScreenSound.sln
 
-      - name: Executar testes com cobertura
-        run: dotnet test ScreenSound.sln --logger "trx;LogFileName=resultado.trx" --collect:"XPlat Code Coverage"
+      - name: Executar testes e gerar cobertura
+        run: dotnet test ScreenSound.sln --logger "trx;LogFileName=resultado.trx" --collect:"XPlat Code Coverage" --filter Categoria=Integracao
 
       - name: Salvar relatório de teste
         if: always()

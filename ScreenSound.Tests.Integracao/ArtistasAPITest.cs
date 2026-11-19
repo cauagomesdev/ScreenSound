@@ -6,6 +6,7 @@ using ScreenSound.Web.Services;
 
 namespace ScreenSound.Tests.Integracao;
 
+[Trait("Categoria", "Integracao")]
 public class ArtistasAPITest
 {
     private static HttpClient CreateClient(
@@ -21,7 +22,6 @@ public class ArtistasAPITest
     }
 
     [Fact]
-    [Trait("Categoria", "Integração")]
     public async Task GetArtistasAsync_DeveChamarEndpointECapturarLista()
     {
         // Arrange
