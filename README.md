@@ -47,3 +47,13 @@ dotnet test ScreenSound.sln
 ```
 
 Os testes usam banco em memória, então não precisam do SQL Server. Eles rodam automaticamente no GitHub Actions a cada push e pull request no `main`.
+
+### Cobertura de código
+
+A cobertura é coletada pelo `coverlet.collector`, configurado em [`coverlet.runsettings`](coverlet.runsettings) (as migrations do EF Core ficam de fora do cálculo).
+
+```bash
+dotnet test ScreenSound.sln --collect:"XPlat Code Coverage"
+```
+
+Cada projeto de teste gera um `coverage.cobertura.xml` dentro da sua pasta `TestResults/`. No GitHub Actions, o resumo da cobertura aparece na página da execução e o relatório HTML completo fica disponível no artefato `relatorio-cobertura`.
