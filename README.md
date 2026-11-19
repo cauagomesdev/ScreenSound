@@ -1,6 +1,6 @@
 # ScreenSound
 
-[![.NET](https://github.com/cauagomesdev/ScreenSound/actions/workflows/dotnet.yml/badge.svg)](https://github.com/cauagomesdev/ScreenSound/actions/workflows/dotnet.yml)
+[![Executar Testes](https://github.com/cauagomesdev/ScreenSound/actions/workflows/tests.yml/badge.svg)](https://github.com/cauagomesdev/ScreenSound/actions/workflows/tests.yml)
 
 Aplicação de catálogo de artistas e músicas construída nos cursos de .NET da Alura e evoluída depois deles.
 

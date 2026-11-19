@@ -15,10 +15,10 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restaurar dependências
-        run: dotnet restore
+        run: dotnet restore ScreenSound.sln
 
       - name: Executar testes
-        run: dotnet test --no-restore --logger "trx;LogFileName=resultado.trx"
+        run: dotnet test ScreenSound.sln --logger "trx;LogFileName=resultado.trx"
 
       - name: Salvar relatório de teste
         if: always()
