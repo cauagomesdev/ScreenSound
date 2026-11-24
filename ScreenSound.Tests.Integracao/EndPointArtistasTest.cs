@@ -43,7 +43,14 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
     {
         factory.UsarContexto(contexto =>
         {
-            contexto.AvaliacaoArtistas.Add(new AvaliacaoArtista { ArtistaId = artistaId, PessoaId = pessoa, Nota = nota });
+            contexto.AvaliacaoArtistas.Add(
+                new AvaliacaoArtista
+                {
+                    ArtistaId = artistaId,
+                    PessoaId = pessoa,
+                    Nota = nota,
+                }
+            );
             return contexto.SaveChanges();
         });
     }
@@ -61,7 +68,9 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
         var clienteAnonimo = factory.CreateClient();
 
         // Act
-        var response = await clienteAnonimo.SendAsync(new HttpRequestMessage(new HttpMethod(metodo), url));
+        var response = await clienteAnonimo.SendAsync(
+            new HttpRequestMessage(new HttpMethod(metodo), url)
+        );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -222,8 +231,10 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        factory.UsarContexto(c => c.Artistas.Select(a => a.Nome).ToList())
-            .Should().Equal("Gal Costa");
+        factory
+            .UsarContexto(c => c.Artistas.Select(a => a.Nome).ToList())
+            .Should()
+            .Equal("Gal Costa");
     }
 
     [Fact]
@@ -245,7 +256,10 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
         var artista = CadastrarArtista("Djavan");
 
         // Act
-        var response = await client.PostAsJsonAsync("/artistas/avaliacao", new AvaliacaoArtistaRequest(artista.Id, 4));
+        var response = await client.PostAsJsonAsync(
+            "/artistas/avaliacao",
+            new AvaliacaoArtistaRequest(artista.Id, 4)
+        );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -263,7 +277,10 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
         CadastrarAvaliacao(artista.Id, pessoaId, nota: 2);
 
         // Act
-        var response = await client.PostAsJsonAsync("/artistas/avaliacao", new AvaliacaoArtistaRequest(artista.Id, 5));
+        var response = await client.PostAsJsonAsync(
+            "/artistas/avaliacao",
+            new AvaliacaoArtistaRequest(artista.Id, 5)
+        );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -275,23 +292,35 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
     [InlineData(10, 5)]
     [InlineData(0, 1)]
     [InlineData(-3, 1)]
-    public async Task PostAvaliacao_NotaForaDoIntervalo_DeveLimitarEntre1E5(int notaEnviada, int notaSalva)
+    public async Task PostAvaliacao_NotaForaDoIntervalo_DeveLimitarEntre1E5(
+        int notaEnviada,
+        int notaSalva
+    )
     {
         // Arrange
         var artista = CadastrarArtista("Djavan");
 
         // Act
-        await client.PostAsJsonAsync("/artistas/avaliacao", new AvaliacaoArtistaRequest(artista.Id, notaEnviada));
+        await client.PostAsJsonAsync(
+            "/artistas/avaliacao",
+            new AvaliacaoArtistaRequest(artista.Id, notaEnviada)
+        );
 
         // Assert
-        factory.UsarContexto(c => c.AvaliacaoArtistas.AsNoTracking().Single()).Nota.Should().Be(notaSalva);
+        factory
+            .UsarContexto(c => c.AvaliacaoArtistas.AsNoTracking().Single())
+            .Nota.Should()
+            .Be(notaSalva);
     }
 
     [Fact]
     public async Task PostAvaliacao_ArtistaInexistente_DeveRetornar404()
     {
         // Act
-        var response = await client.PostAsJsonAsync("/artistas/avaliacao", new AvaliacaoArtistaRequest(999, 5));
+        var response = await client.PostAsJsonAsync(
+            "/artistas/avaliacao",
+            new AvaliacaoArtistaRequest(999, 5)
+        );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -307,7 +336,9 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
         CadastrarAvaliacao(artista.Id, pessoaId, nota: 3);
 
         // Act
-        var avaliacao = await client.GetFromJsonAsync<AvaliacaoArtistaResponse>($"/artistas/{artista.Id}/avaliacao");
+        var avaliacao = await client.GetFromJsonAsync<AvaliacaoArtistaResponse>(
+            $"/artistas/{artista.Id}/avaliacao"
+        );
 
         // Assert
         avaliacao.Should().Be(new AvaliacaoArtistaResponse(artista.Id, 3));
@@ -321,7 +352,9 @@ public class EndPointArtistasTest : IClassFixture<ScreenSoundApiFactory>
         CadastrarAvaliacao(artista.Id, pessoa: pessoaId + 100, nota: 5); // nota de outra pessoa
 
         // Act
-        var avaliacao = await client.GetFromJsonAsync<AvaliacaoArtistaResponse>($"/artistas/{artista.Id}/avaliacao");
+        var avaliacao = await client.GetFromJsonAsync<AvaliacaoArtistaResponse>(
+            $"/artistas/{artista.Id}/avaliacao"
+        );
 
         // Assert
         avaliacao.Should().Be(new AvaliacaoArtistaResponse(artista.Id, 0));
