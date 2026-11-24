@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Arquivo gerado pelo coverlet (o nome da subpasta é um GUID, por isso o "*")
+      coverage_file: ScreenSound.Tests.Integracao/TestResults/*/coverage.cobertura.xml
     steps:
       - name: Clonar repositório
         uses: actions/checkout@v4
@@ -18,7 +21,7 @@ jobs:
         run: dotnet restore ScreenSound.sln
 
       - name: Executar testes e gerar cobertura
-        run: dotnet test ScreenSound.sln --logger "trx;LogFileName=resultado.trx" --collect:"XPlat Code Coverage" --filter Categoria=Integracao
+        run: dotnet test ScreenSound.sln --no-restore --logger "trx;LogFileName=resultado.trx" --collect:"XPlat Code Coverage" --filter Categoria=Integracao
 
       - name: Salvar relatório de teste
         if: always()
@@ -27,19 +30,23 @@ jobs:
           name: resultado-teste
           path: "**/resultado.trx"
 
+      - name: Instalar ReportGenerator
+        if: always()
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.6.1
+
       - name: Gerar relatório de cobertura
         if: always()
         run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.6.0
-          reportgenerator \
-            -reports:"**/TestResults/*/coverage.cobertura.xml" \
-            -targetdir:relatorio-cobertura \
-            -reporttypes:"Html;MarkdownSummaryGithub"
-          cat relatorio-cobertura/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          reportgenerator -reports:"${{ env.coverage_file }}" -targetdir:"ScreenSound.Tests.Integracao/RelatorioCobertura" -reporttypes:"Html;MarkdownSummaryGithub"
+          cat ScreenSound.Tests.Integracao/RelatorioCobertura/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Salvar relatório de cobertura
+      - name: Listar arquivos do relatório
+        if: always()
+        run: ls ScreenSound.Tests.Integracao/RelatorioCobertura
+
+      - name: Upload do artefato do relatório de cobertura
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: relatorio-cobertura
-          path: relatorio-cobertura
+          path: ScreenSound.Tests.Integracao/RelatorioCobertura
